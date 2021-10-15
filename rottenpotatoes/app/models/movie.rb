@@ -4,14 +4,14 @@ class Movie < ActiveRecord::Base
     movie = self.find(id)
     
     if movie.director == 0 or movie.director == nil
-      return [movie, [], true]
+      return [movie, []]
     end
     
     if movie.director.empty?
       return [movie, [], true]
     else
       movies = self.where(:director => movie.director)
-      return [movie, movies, false]
+      return [movie, movies]
     end
   end
 end
