@@ -39,12 +39,13 @@ class MoviesController < ApplicationController
   end
   
   def similar
-    @movie, @movies, error = Movie.find_with_same_director(params[:id])
+    @movie, @movies, er = Movie.find_with_same_director(params[:id])
     
-    if error
+    if er
       flash[:notice] = "'#{@movie.title}' has no director info"
       redirect_to movies_path
     end
+    
   end
 
   private

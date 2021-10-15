@@ -13,5 +13,6 @@ class Movie < ActiveRecord::Base
       movies = self.where(:director => movie.director)
       return [movie, movies]
     end
+    
   end
 end
