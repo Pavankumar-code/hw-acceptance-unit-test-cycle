@@ -13,30 +13,21 @@ describe MoviesController, :type => :controller do
     it 'when the specified movie has a director, it should select similar template' do
       Movie.stub(:find_with_same_director).and_return(nil,nil,false)
       get :similar, {:id => "Aladdin"}
-      response.should render_template('similar')
+      expect(response).to render_template('similar')
     end
     
-    it 'should make the movies with same director available to that template' do
-      fake_movie = double('Movie')
-      fake_results = [double('Movie'), double('Movie')]
-      Movie.stub(:find_with_same_director).and_return([fake_movie, fake_results, false])
-      get :similar, {:id => 1}
-      assigns(:movie).should == fake_movie
-      assigns(:movies).should == fake_results
+    it 'should assign similar movies and/or template if the director exists' do
+      movie = double('Movie', :title => 'Aladdin', :id => 'main')
+      Movie.stub(:find_with_same_director).and_return([movie, nil, false])
+      get :similar, {:id => 'main'}
+      assigns(:movie).should == movie
     end
     
-    it 'should select the Index page to redirect to when movie has no director' do
-      fake_movie = double('Movie', :title => 'Aladdin')
-      Movie.stub(:find_with_same_director).and_return([fake_movie,nil,true])
-      get :similar, {:id => 1}
-      response.should redirect_to movies_path
-    end
-    
-    it 'should make the error message available to that template' do
-      fake_movie = double('Movie', :title => 'Aladdin')
-      Movie.stub(:find_with_same_director).and_return([fake_movie, nil, true])
-      get :similar, {:id => 1}
-      flash[:notice].should eq("'#{fake_movie.title}' has no director info")
+    it 'should redirect to main page if director is not known' do
+      movie = double('Movie', :title => 'No name')
+      Movie.stub(:find_with_same_director).with('No name').and_return([movie,nil,true])
+      get :similar, {:id => 'No name'}
+      expect(response).to redirect_to(movies_path)
     end
     
   end
